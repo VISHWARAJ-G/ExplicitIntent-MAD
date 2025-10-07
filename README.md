@@ -31,12 +31,13 @@ Latest Version Android Studio
 * Registeration Number : 212223220125
 #### 1. MainActivity.java
 ```
-package com.example.explicit_intent;
+package com.example.factorializer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,74 +46,69 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-
+    EditText textVal;
+    Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button = findViewById(R.id.button);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), MainActivity2.class);
-                startActivity(i);
+        textVal = findViewById(R.id.editTextText);
+        btn = findViewById(R.id.button);
+        btn.setOnClickListener(v->{
+            String input=textVal.getText().toString().trim();
+            if(input.isEmpty()){
+                Toast.makeText(MainActivity.this,"Please enter a number",Toast.LENGTH_SHORT).show();
+                return;
             }
+            try{
+                int num=Integer.parseInt(input);
+                if(num<0){
+                    Toast.makeText(this, "Enter a non-negative number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(MainActivity.this,ResultActivity.class);
+                intent.putExtra("number",num);
+                startActivity(intent);
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show();
+            }
+
         });
     }
 }
 ```
-#### 2. MainActivity2.java
+#### 2. ResultActivity.java
 ```
-package com.example.explicit_intent;
+package com.example.factorializer;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity2 extends AppCompatActivity {
+import java.math.BigInteger;
+
+public class ResultActivity extends AppCompatActivity {
+    TextView resText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-        Button button = findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), MainActivity3.class);
-                startActivity(i);
-            }
-        });
+        setContentView(R.layout.activity_result);
+        resText = findViewById(R.id.textView4);
+        int number = getIntent().getIntExtra("number",0);
+        BigInteger fact = factorial(number);
+        resText.setText(number+"! = "+fact.toString());
     }
-}
-```
-#### 3. MainActivity3.java
-```
-package com.example.explicit_intent;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-public class MainActivity3 extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstance) {
-        super.onCreate(savedInstance);
-        setContentView(R.layout.activity_main3);
-        Button button = findViewById(R.id.button3);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
-            }
-        });
+    private BigInteger factorial(int n) {
+        BigInteger result = BigInteger.ONE;
+        for (int i = 2; i <= n; i++) {
+            result = result.multiply(BigInteger.valueOf(i));
+        }
+        return result;
     }
 }
 ```
@@ -130,9 +126,6 @@ public class MainActivity3 extends AppCompatActivity {
 
 #### Task2
 <img src="./Output_Images/Task2_Image.jpg" height=400>
-
-#### Task3
-<img src="./Output_Images/Task3_Image.jpg" height=400>
 
 ## RESULT
 Thus a Simple Android Application create a Explicit Intents using Android Studio is developed and executed successfully.
